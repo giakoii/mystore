@@ -1,0 +1,7 @@
+﻿services:
+  mystoremanagement:
+    image: mystoremanagement
+    build:
+      context: .
+      dockerfile: MyStoreManagement/Dockerfile
+
