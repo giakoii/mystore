@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MyStoreManagement.Application\MyStoreManagement.Application.csproj" />
+      <ProjectReference Include="..\MyStoreManagement.Domain\MyStoreManagement.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CloudinaryDotNet" Version="1.27.6" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="NLog" Version="6.0.3" />
+      <PackageReference Include="NLog.Config" Version="4.7.15" />
+      <PackageReference Include="OpenIddict" Version="7.0.0" />
+      <PackageReference Include="OpenIddict.Abstractions" Version="7.0.0" />
+      <PackageReference Include="OpenIddict.AspNetCore" Version="7.0.0" />
+      <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="7.0.0" />
+      <PackageReference Include="OpenIddict.EntityFrameworkCore.Models" Version="7.0.0" />
+      <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="7.0.0" />
+      <PackageReference Include="OpenIddict.Validation.SystemNetHttp" Version="7.0.0" />
+    </ItemGroup>
+
+</Project>

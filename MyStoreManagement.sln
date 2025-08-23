@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStoreManagement", "MyStoreManagement\MyStoreManagement.csproj", "{FCF8A041-991B-494B-9A47-56F8A53B0C3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStoreManagement.API", "MyStoreManagement.API\MyStoreManagement.API.csproj", "{FCF8A041-991B-494B-9A47-56F8A53B0C3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A9C86BC9-EE97-42FD-9428-CF3FF35892C6}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStoreManagement.Application", "MyStoreManagement.Application\MyStoreManagement.Application.csproj", "{7F597B16-94E8-442F-8118-AE2AD811A74A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStoreManagement.Infrastructure", "MyStoreManagement.Infrastructure\MyStoreManagement.Infrastructure.csproj", "{F2DF412D-81C3-4A27-A0FD-A3CDBC0B1DC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyStoreManagement.Domain", "MyStoreManagement.Domain\MyStoreManagement.Domain.csproj", "{86378087-43F4-41E2-8B8B-D0CFF05FB7FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,5 +23,17 @@ Global
 		{FCF8A041-991B-494B-9A47-56F8A53B0C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCF8A041-991B-494B-9A47-56F8A53B0C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCF8A041-991B-494B-9A47-56F8A53B0C3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F597B16-94E8-442F-8118-AE2AD811A74A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F597B16-94E8-442F-8118-AE2AD811A74A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F597B16-94E8-442F-8118-AE2AD811A74A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F597B16-94E8-442F-8118-AE2AD811A74A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2DF412D-81C3-4A27-A0FD-A3CDBC0B1DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2DF412D-81C3-4A27-A0FD-A3CDBC0B1DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2DF412D-81C3-4A27-A0FD-A3CDBC0B1DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2DF412D-81C3-4A27-A0FD-A3CDBC0B1DC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86378087-43F4-41E2-8B8B-D0CFF05FB7FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86378087-43F4-41E2-8B8B-D0CFF05FB7FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86378087-43F4-41E2-8B8B-D0CFF05FB7FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86378087-43F4-41E2-8B8B-D0CFF05FB7FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
