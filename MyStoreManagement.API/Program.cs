@@ -10,17 +10,6 @@ EnvLoader.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure URLs for all interfaces
-builder.WebHost.UseUrls("http://0.0.0.0:7000", "https://0.0.0.0:7001");
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(5000); // HTTP
-    options.ListenAnyIP(5001, listenOptions =>
-    {
-        listenOptions.UseHttps("certs/aspnetapp.pfx", Environment.GetEnvironmentVariable("CERT_PASSWORD"));
-    });
-});
-
 // Core services
 builder.Services.AddControllers();
 builder.Services.AddHostedService<Worker>();
@@ -39,6 +28,18 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Configure(builder.Configuration.GetSection("Kestrel"));
+});
+var urls = builder.Configuration["Kestrel:Endpoints:Http:Url"];
+Console.WriteLine($"Kestrel listening on: {urls}");
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(7001);
+});
+
 var app = builder.Build();
 
 // Ensure the database is created
@@ -51,13 +52,15 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.Urls.Clear();
+app.Urls.Add("http://0.0.0.0:7001");
 app.UseCors();
 app.UseRouting();
 app.UseAuthentication();
 app.UseStatusCodePages();
 app.UseAuthorization();
-app.UseHttpsRedirection();
 app.MapControllers();
 app.UseOpenApi();
 app.UseSwaggerUi();
+
 app.Run();
