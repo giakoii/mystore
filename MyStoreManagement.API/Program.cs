@@ -32,13 +32,6 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.Configure(builder.Configuration.GetSection("Kestrel"));
 });
-var urls = builder.Configuration["Kestrel:Endpoints:Http:Url"];
-Console.WriteLine($"Kestrel listening on: {urls}");
-
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(7001);
-});
 
 var app = builder.Build();
 
