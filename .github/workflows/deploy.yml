@@ -3,7 +3,7 @@ name: Deploy MyStoreManagement .NET App to VPS
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   deploy:

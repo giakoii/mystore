@@ -8,12 +8,12 @@
       - "3000:3000"
       - "3001:3001"
     environment:
-      ASPNETCORE_ENVIRONMENT: "Production"
-      ASPNETCORE_URLS: "http://+:3000;https://+:3001"
-      ASPNETCORE_Kestrel__Certificates__Default__Password: "${CERT_PASSWORD}"
-      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
-      CLIENT_SECRET: "${CLIENT_SECRET}"
-      CONNECTION_DATABASE: "${CONNECTION_DATABASE}"
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:3000;https://+:3001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - CONNECTION_DATABASE=${CONNECTION_DATABASE}
     volumes:
       - ./certs:/https:ro
     restart: unless-stopped
