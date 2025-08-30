@@ -63,4 +63,4 @@ jobs:
         run: |
           echo "🚀 MyStoreManagement deployed successfully!"
           echo "📱 API should be available at: http://${{ secrets.VPS_HOST }}:3000"
-          echo "📋 Swagger UI: http://${{ secrets.VPS_HOST }}:3000/swagger"
+          echo "📋 Swagger UI: http://${{ secrets.VPS_HOST }}:7000/swagger"
