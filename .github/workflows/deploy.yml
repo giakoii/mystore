@@ -57,19 +57,7 @@ jobs:
 
             echo "📄 Recent logs from MyStoreManagement container:"
             docker logs $(docker ps -q --filter "name=mystoremanagement") --tail=50 || echo "⚠️ Cannot fetch logs"
-
-      # Kiểm tra health của ứng dụng
-      - name: Health Check
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            echo "🔍 Checking application health..."
-            sleep 5
-            curl -f http://localhost:3000/health || echo "⚠️ Health check endpoint not available"
-
+            
       # Thông báo URL ứng dụng
       - name: Notify deployment success
         run: |

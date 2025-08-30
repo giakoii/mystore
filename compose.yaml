@@ -5,8 +5,8 @@
       context: .
       dockerfile: MyStoreManagement.API/Dockerfile
     ports:
-      - "3000:3000"
-      - "3001:3001"
+      - "7000:7000"
+      - "7001:7001"
     environment:
       - CLIENT_SECRET=${CLIENT_SECRET}
       - CONNECTION_DATABASE=${CONNECTION_DATABASE}
