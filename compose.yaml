@@ -10,6 +10,8 @@
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7000;https://+:7001
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - CONNECTION_DATABASE=${CONNECTION_DATABASE}
     restart: unless-stopped
     networks:
       - mystore-network
