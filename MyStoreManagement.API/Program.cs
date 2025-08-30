@@ -10,9 +10,6 @@ EnvLoader.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure for HTTP only in production
-builder.WebHost.UseUrls("http://0.0.0.0:5000");
-
 // Core services
 builder.Services.AddControllers();
 builder.Services.AddHostedService<Worker>();
@@ -31,6 +28,13 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Configure(builder.Configuration.GetSection("Kestrel"));
+});
+var urls = builder.Configuration["Kestrel:Endpoints:Http:Url"];
+Console.WriteLine($"Kestrel listening on: {urls}");
+
 var app = builder.Build();
 
 // Ensure the database is created
@@ -43,13 +47,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-// Health check endpoint
-app.MapGet("/health", () => Results.Ok(new { 
-    Status = "Healthy", 
-    Timestamp = DateTime.UtcNow,
-    Environment = app.Environment.EnvironmentName 
-}));
-
+app.Urls.Clear();
+app.Urls.Add("http://0.0.0.0:7001");
 app.UseCors();
 app.UseRouting();
 app.UseAuthentication();
