@@ -10,28 +10,9 @@ EnvLoader.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure URLs for all interfaces
-if (builder.Environment.IsDevelopment())
-{
-    builder.WebHost.UseUrls("http://0.0.0.0:7000", "https://0.0.0.0:7001");
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(5000); // HTTP
-        options.ListenAnyIP(5001, listenOptions =>
-        {
-            listenOptions.UseHttps("certs/aspnetapp.pfx", Environment.GetEnvironmentVariable("CERT_PASSWORD"));
-        });
-    });
-}
-else
-{
-    // Production - chỉ dùng HTTP, để reverse proxy handle HTTPS
-    builder.WebHost.UseUrls("http://0.0.0.0:5000");
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(5000); // Chỉ HTTP
-    });
-}
+// Configure for HTTP only in production
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
+
 // Core services
 builder.Services.AddControllers();
 builder.Services.AddHostedService<Worker>();
@@ -62,6 +43,13 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { 
+    Status = "Healthy", 
+    Timestamp = DateTime.UtcNow,
+    Environment = app.Environment.EnvironmentName 
+}));
+
 app.UseCors();
 app.UseRouting();
 app.UseAuthentication();
@@ -70,7 +58,5 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseOpenApi();
 app.UseSwaggerUi();
-app.MapGet(
-    "/health", () => 
-        Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow }));
+
 app.Run();
