@@ -1,6 +1,9 @@
+using MyStoreManagement.Application.Utils.Paginations;
+
 namespace MyStoreManagement.Application.Dtos.Pricings;
 
-public record PricingBatchSelectsRequest
+public class PricingBatchSelectsRequest : PaginationRequest
 {
-    // Có thể thêm các filter parameters sau này nếu cần
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
 }

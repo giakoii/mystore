@@ -1,8 +1,11 @@
 using MyStoreManagement.Application.Dtos.Pricings;
 using MyStoreManagement.Application.Interfaces.Pricings;
 using MyStoreManagement.Application.Interfaces.Repositories;
+using MyStoreManagement.Application.Utils.Paginations;
 using MyStoreManagement.Domain.Models;
 using Shared.Application.Utils.Const;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace MyStoreManagement.Infrastructure.Pricings;
 
@@ -91,48 +94,79 @@ public class PricingService : IPricingService
     public async Task<PricingBatchSelectsResponse> GetPricingBatchesAsync(PricingBatchSelectsRequest request)
     {
         var response = new PricingBatchSelectsResponse { Success = false };
-    
-        // Get all pricing batches with their product prices
-        var pricingBatches = await _pricingBatchRepository.ToListAsync(
-            null,
-            false,
-            CancellationToken.None,
-            pb => pb.ProductPrices
-        );
-    
-        // Get all product types
-        var productTypes = await _productTypeRepository.ToListAsync();
-    
-        // Map ProductType to each ProductPrice
-        foreach (var batch in pricingBatches)
+
+        try
         {
-            foreach (var price in batch.ProductPrices)
+            // Tạo predicate cho filtering
+            Expression<Func<PricingBatch, bool>>? predicate = null;
+            
+            if (request.FromDate.HasValue && request.ToDate.HasValue)
             {
-                price.ProductType = productTypes.FirstOrDefault(pt => pt.ProductTypeId == price.ProductTypeId);
+                predicate = pb => pb.CreatedAt >= request.FromDate.Value && pb.CreatedAt <= request.ToDate.Value;
             }
-        }
-    
-        // Map to response DTOs
-        response.Response = pricingBatches
-            .Select(pb => new PricingBatchSelectsEntity
+            else if (request.FromDate.HasValue)
+            {
+                predicate = pb => pb.CreatedAt >= request.FromDate.Value;
+            }
+            else if (request.ToDate.HasValue)
+            {
+                predicate = pb => pb.CreatedAt <= request.ToDate.Value;
+            }
+
+            // Sử dụng PagedAsync để lấy data với pagination
+            var pagedResult = await _pricingBatchRepository.PagedAsync(
+                request.Page,
+                request.PageSize,
+                predicate,
+                false,
+                CancellationToken.None,
+                pb => pb.ProductPrices
+            );
+
+            // Lấy product types cho các ProductPrice
+            var productTypeIds = pagedResult.Items
+                .SelectMany(pb => pb.ProductPrices)
+                .Select(pp => pp.ProductTypeId)
+                .Distinct()
+                .ToList();
+
+            var productTypes = await _productTypeRepository.ToListAsync(
+                pt => productTypeIds.Contains(pt.ProductTypeId)
+            );
+
+            // Map to response DTOs
+            var pricingBatchEntities = pagedResult.Items.Select(pb => new PricingBatchSelectsEntity
             {
                 PricingBatchId = pb.PricingBatchId,
                 Title = pb.Title,
                 Description = pb.Description,
                 CreatedAt = pb.CreatedAt,
-                PriceDetails = pb.ProductPrices.Select(pp => new ProductPriceEntity
-                {
-                    PriceId = pp.PriceId,
-                    ProductTypeId = pp.ProductTypeId,
-                    TypeName = pp.ProductType?.TypeName!,
-                    Price = pp.Price
+                PriceDetails = pb.ProductPrices.Select(pp => {
+                    var productType = productTypes.FirstOrDefault(pt => pt.ProductTypeId == pp.ProductTypeId);
+                    return new ProductPriceEntity
+                    {
+                        PriceId = pp.PriceId,
+                        ProductTypeId = pp.ProductTypeId,
+                        TypeName = productType?.TypeName ?? "Unknown",
+                        Price = pp.Price
+                    };
                 }).ToList()
             })
             .OrderByDescending(x => x.CreatedAt)
             .ToList();
-    
-        response.Success = true;
-        response.SetMessage(MessageId.I00001);
+
+            var paginationResponse = new PaginationResponse<PricingBatchSelectsEntity>(
+                pricingBatchEntities, pagedResult.TotalCount, request.Page, request.PageSize);
+
+            response.Success = true;
+            response.Response = paginationResponse;
+            response.SetMessage(MessageId.I00001, "Pricing batches retrieved successfully.");
+        }
+        catch (Exception ex)
+        {
+            response.SetMessage(MessageId.E00000, $"Error retrieving pricing batches: {ex.Message}");
+        }
+
         return response;
     }
 }

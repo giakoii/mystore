@@ -1,10 +1,11 @@
 using MyStoreManagement.Application.ApiEntities;
+using MyStoreManagement.Application.Utils.Paginations;
 
 namespace MyStoreManagement.Application.Dtos.Pricings;
 
-public record PricingBatchSelectsResponse : AbstractApiResponse<List<PricingBatchSelectsEntity>>
+public record PricingBatchSelectsResponse : AbstractApiResponse<PaginationResponse<PricingBatchSelectsEntity>>
 {
-    public override List<PricingBatchSelectsEntity> Response { get; set; } = new List<PricingBatchSelectsEntity>();
+    public override PaginationResponse<PricingBatchSelectsEntity> Response { get; set; }
 }
 
 public class PricingBatchSelectsEntity
