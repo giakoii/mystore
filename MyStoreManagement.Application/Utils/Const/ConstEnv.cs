@@ -1,12 +1,10 @@
-namespace Shared.Common.Utils.Const;
+namespace MyStoreManagement.Application.Utils.Const;
 
 public class ConstEnv
 {
     public const string ClientSecret = "CLIENT_SECRET";
     
-    public const string AuthServiceDB = "AUTH_SERVICE_DB";
-    
-    public const string UserServiceDB = "USER_SERVICE_DB";
+    public const string ConnectionDatabase = "CONNECTION_DATABASE";
     
     public const string EncryptionIv = "ENCRYPTION_IV";
     
@@ -17,8 +15,4 @@ public class ConstEnv
     public const string CloudApiKey = "CLOUDINARY_API_KEY";
     
     public const string CloudApiSecret = "CLOUDINARY_API_SECRET";
-    
-    public const string AuthServiceUrl = "AUTH_SERVICE_URL";
-    
-    public const string UserServiceUrl = "USER_SERVICE_URL";
 }

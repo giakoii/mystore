@@ -102,7 +102,7 @@ public class LoggingUtil
     public void EndLog(object response)
     {
         var message = JsonSerializer.Serialize(response, _jsonSerializerOptions);
-        var maxLength = 5000;
+        var maxLength = 7001;
         if (message.Length > maxLength) message = message.Substring(0, maxLength) + "【Omitted】";
 
         _logger.Info($"{_executeId} | {_logger.Name} | {_userName} | End Logs：{message}");

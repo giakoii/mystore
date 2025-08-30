@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using MyStoreManagement.Application.Settings;
+using MyStoreManagement.Application.Utils.Const;
 using MyStoreManagement.Infrastructure.Contexts;
 using Shared.Common.Utils.Const;
 
@@ -8,7 +10,10 @@ public static class DatabaseExtensions
 {
     public static IServiceCollection AddDatabaseServices(this IServiceCollection services)
     {
-        var connectionString = Environment.GetEnvironmentVariable(ConstEnv.AuthServiceDB);
+        EnvLoader.Load();
+        var connectionString = Environment.GetEnvironmentVariable(ConstEnv.ConnectionDatabase);
+        services.AddDbContext<MyStoreManagementContext>(options =>
+            options.UseSqlServer(connectionString));
         
         // Entity Framework configuration
         services.AddDbContext<MyStoreManagementContext>(options =>

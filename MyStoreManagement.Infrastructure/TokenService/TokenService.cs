@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using AuthService.Application.Interfaces.TokenServices;
 using Microsoft.IdentityModel.Tokens;
-using MyStoreManagement.Application.Interfaces.Dtos;
+using MyStoreManagement.Application.Dtos;
+using MyStoreManagement.Application.Dtos.Users;
 using MyStoreManagement.Application.Interfaces.IdentityHepers;
 using MyStoreManagement.Application.Interfaces.TokenServices;
 using OpenIddict.Abstractions;
@@ -29,11 +29,11 @@ public class TokenService : ITokenService
     }
 
     /// <summary>
-    /// Generate a new ClaimsPrincipal for the user based on the UserLoginDto.
+    /// Generate a new ClaimsPrincipal for the user based on the UserLoginResponse.
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public async Task<ClaimsPrincipal> GenerateClaimsPrincipal(UserLoginDto user)
+    public async Task<ClaimsPrincipal> GenerateClaimsPrincipal(UserLoginResponse user)
     {
         var identity = new ClaimsIdentity(
             TokenValidationParameters.DefaultAuthenticationType,
@@ -44,7 +44,7 @@ public class TokenService : ITokenService
         // Set claims for the identity
         identity.SetClaim(OpenIddictConstants.Claims.Subject, user.UserId.ToString(), OpenIddictConstants.Destinations.AccessToken);
         identity.SetClaim(OpenIddictConstants.Claims.Name, user.FullName, OpenIddictConstants.Destinations.AccessToken);
-        identity.SetClaim(OpenIddictConstants.Claims.Email, user.Email, OpenIddictConstants.Destinations.AccessToken);
+        identity.SetClaim(OpenIddictConstants.Claims.PhoneNumber, user.PhoneNumber, OpenIddictConstants.Destinations.AccessToken);
         identity.SetClaim(OpenIddictConstants.Claims.Role, user.RoleName, OpenIddictConstants.Destinations.AccessToken);
         identity.SetClaim(OpenIddictConstants.Claims.Audience, ConstToken.Audience, OpenIddictConstants.Destinations.AccessToken);
 
@@ -192,9 +192,9 @@ public class TokenService : ITokenService
 
         return new UserSessionResponse
         {
-            Email = currentUser!.Email,
+            PhoneNumber = currentUser!.PhoneNumber,
             Name = currentUser.FullName,
-            UserId = Guid.Parse(currentUser.UserId),
+            UserId = int.Parse(currentUser.UserId),
             Role = currentUser.RoleName,
         };
     }

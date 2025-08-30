@@ -3,5 +3,23 @@
     image: mystoremanagement
     build:
       context: .
-      dockerfile: MyStoreManagement/Dockerfile
+      dockerfile: MyStoreManagement.API/Dockerfile
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:7000;https://+:7001
+    restart: unless-stopped
+    networks:
+      - mystore-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
+networks:
+  mystore-network:
+    driver: bridge

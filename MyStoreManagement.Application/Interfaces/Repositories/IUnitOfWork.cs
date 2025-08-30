@@ -1,4 +1,4 @@
-namespace Shared.Application.Interfaces.Repositories;
+namespace MyStoreManagement.Application.Interfaces.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {
@@ -13,9 +13,6 @@ public interface IUnitOfWork : IDisposable
     /// <summary>
     /// Save all changes.
     /// </summary>
-    /// <param name="userName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <param name="needLogicalDelete"></param>
     /// <returns></returns>
-    Task<int> SaveChangesAsync(string userName, CancellationToken cancellationToken = default, bool needLogicalDelete = false);
+    Task<int> SaveChangesAsync();
 }

@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using MyStoreManagement.Application.Interfaces.Repositories;
 using MyStoreManagement.Application.Utils;
 using MyStoreManagement.Application.Utils.Paganitions;
+using MyStoreManagement.Infrastructure.Contexts;
 
 namespace MyStoreManagement.Infrastructure.Repositories;
 
-public class BaseRepository<TEntity>(DbContext context) : IRepository<TEntity> where TEntity : class
+public class BaseRepository<TEntity>(MyStoreManagementContext context) : IRepository<TEntity> where TEntity : class
 {
     private DbSet<TEntity> DbSet => context.Set<TEntity>();
 
@@ -16,12 +17,17 @@ public class BaseRepository<TEntity>(DbContext context) : IRepository<TEntity> w
     /// <param name="predicate"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes)
     {
+        var query = DbSet.AsQueryable();
         if (predicate != null)
-            return await DbSet.FirstOrDefaultAsync(predicate, cancellationToken);
-    
-        return await DbSet.FirstOrDefaultAsync(cancellationToken);
+            query = query.Where(predicate);
+
+        query = includes.Aggregate(query, (current, inc) => current.Include(inc));
+
+        if (!isTracking) query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -30,12 +36,17 @@ public class BaseRepository<TEntity>(DbContext context) : IRepository<TEntity> w
     /// <param name="predicate"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<TEntity>> ToListAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TEntity>> ToListAsync(Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes)
     {
+        var query = DbSet.AsQueryable();
         if (predicate != null)
-            return await DbSet.Where(predicate).ToListAsync(cancellationToken);
+            query = query.Where(predicate);
 
-        return await DbSet.ToListAsync(cancellationToken);
+        query = includes.Aggregate(query, (current, inc) => current.Include(inc));
+
+        if (!isTracking) query = query.AsNoTracking();
+
+        return await query.ToListAsync(cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -46,12 +57,24 @@ public class BaseRepository<TEntity>(DbContext context) : IRepository<TEntity> w
     /// <param name="predicate"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<PagedResult<TEntity>> PagedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<TEntity>> PagedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes)
     {
-        var query = predicate != null ? DbSet.Where(predicate) : DbSet;
+        var query = DbSet.AsQueryable();
+
+        if (predicate != null)
+            query = query.Where(predicate);
+
+        query = includes.Aggregate(query, (current, inc) => current.Include(inc));
+
+        if (!isTracking)
+            query = query.AsNoTracking();
+
         var totalCount = await query.CountAsync(cancellationToken);
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken);
-    
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
         return new PagedResult<TEntity>
         {
             Items = items,
@@ -120,5 +143,16 @@ public class BaseRepository<TEntity>(DbContext context) : IRepository<TEntity> w
     public void UpdateRange(IEnumerable<TEntity> entities)
     {
         DbSet.UpdateRange(entities);
+    }
+
+    /// <summary>
+    /// Delete entity in the database
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    public bool Delete(TEntity entity)
+    {
+        DbSet.Remove(entity);
+        return true;
     }
 }

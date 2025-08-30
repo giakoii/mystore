@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyStoreManagement.Application.Utils.Const;
+using MyStoreManagement.Domain.Models;
 using MyStoreManagement.Infrastructure;
 using MyStoreManagement.Infrastructure.Contexts;
 

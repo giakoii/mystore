@@ -9,17 +9,17 @@ public interface IRepository<TEntity> where TEntity : class
     /// <summary>
     /// Get first entity matching the predicate.
     /// </summary>
-    Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
-    
+    Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes);
+
     /// <summary>
     /// Get all entities matching the predicate.
     /// </summary>
-    Task<IEnumerable<TEntity>> ToListAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TEntity>> ToListAsync(Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes);
     
     /// <summary>
     /// Get paged entities.
     /// </summary>
-    Task<PagedResult<TEntity>> PagedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
+    Task<PagedResult<TEntity>> PagedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes);
     
     /// <summary>
     /// Check if entity exists.
@@ -56,4 +56,6 @@ public interface IRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="entities"></param>
     void UpdateRange(IEnumerable<TEntity> entities);
+    
+    bool Delete(TEntity entity);
 }

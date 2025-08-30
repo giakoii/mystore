@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.Application.Interfaces.Repositories;
+using MyStoreManagement.Application.Interfaces.Repositories;
+using MyStoreManagement.Infrastructure.Contexts;
 
 namespace MyStoreManagement.Infrastructure.Repositories;
 
-public class UnitOfWork(DbContext context) : IUnitOfWork
+public class UnitOfWork(MyStoreManagementContext context) : IUnitOfWork
 {
  
     /// <summary>
@@ -46,12 +47,9 @@ public class UnitOfWork(DbContext context) : IUnitOfWork
     /// <summary>
     /// Save all changes to the database
     /// </summary>
-    /// <param name="userName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <param name="needLogicalDelete"></param>
     /// <returns></returns>
-    public async Task<int> SaveChangesAsync(string userName, CancellationToken cancellationToken = default, bool needLogicalDelete = false)
+    public async Task<int> SaveChangesAsync()
     {
-        return await context.SaveChangesAsync(cancellationToken);
+        return await context.SaveChangesAsync();
     }
 }

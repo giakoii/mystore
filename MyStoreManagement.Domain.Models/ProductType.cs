@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MyStoreManagement.Infrastructure;
+namespace MyStoreManagement.Domain.Models;
 
 public partial class ProductType
 {

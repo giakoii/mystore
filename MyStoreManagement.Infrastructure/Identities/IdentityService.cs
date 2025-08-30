@@ -21,8 +21,8 @@ public class IdentityService(IHttpContextAccessor httpContextAccessor) : IIdenti
         // Get id
         var id = identity!.FindFirst(OpenIddictConstants.Claims.Subject)!.Value;
         
-        // Get email
-        var email = identity!.FindFirst(OpenIddictConstants.Claims.Email)!.Value;
+        // Get phone number
+        var phone = identity.FindFirst(OpenIddictConstants.Claims.PhoneNumber)!.Value;
         
         // Get name
         var name = identity.FindFirst(OpenIddictConstants.Claims.Name)?.Value;
@@ -34,7 +34,7 @@ public class IdentityService(IHttpContextAccessor httpContextAccessor) : IIdenti
         var identityEntity = new IdentityEntity
         {
             UserId = id!,
-            Email = email,
+            PhoneNumber = phone,
             FullName = name!,
             RoleName = role!,
         };

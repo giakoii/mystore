@@ -1,17 +1,17 @@
 using System.Security.Claims;
-using AuthService.Application.Interfaces.TokenServices;
-using MyStoreManagement.Application.Interfaces.Dtos;
+using MyStoreManagement.Application.Dtos;
+using MyStoreManagement.Application.Dtos.Users;
 
 namespace MyStoreManagement.Application.Interfaces.TokenServices;
 
 public interface ITokenService
 {
     /// <summary>
-    /// Generate a new ClaimsPrincipal for the user based on the UserLoginDto.
+    /// Generate a new ClaimsPrincipal for the user based on the UserLoginResponse.
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    Task<ClaimsPrincipal> GenerateClaimsPrincipal(UserLoginDto user);
+    Task<ClaimsPrincipal> GenerateClaimsPrincipal(UserLoginResponse user);
 
     /// <summary>
     /// Generate a new ClaimsPrincipal for the user based on the ClaimsPrincipal.

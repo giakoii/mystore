@@ -1,4 +1,5 @@
 using MyStoreManagement.Application.Settings;
+using MyStoreManagement.Application.Utils.Const;
 using MyStoreManagement.Infrastructure.Contexts;
 using OpenIddict.Abstractions;
 using Shared.Common.Utils.Const;

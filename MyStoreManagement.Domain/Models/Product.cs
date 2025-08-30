@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MyStoreManagement.Infrastructure;
+﻿namespace MyStoreManagement.Domain.Models;
 
 public partial class Product
 {
@@ -12,6 +9,4 @@ public partial class Product
     public int? CategoryId { get; set; }
 
     public virtual Category? Category { get; set; }
-
-    public virtual ICollection<ProductType> ProductTypes { get; set; } = new List<ProductType>();
 }

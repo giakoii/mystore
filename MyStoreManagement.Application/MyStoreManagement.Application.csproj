@@ -7,11 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces\ProductTypes\" />
-      <Folder Include="Interfaces\Users\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="NLog" Version="6.0.3" />
     </ItemGroup>
 

@@ -10,6 +10,9 @@ EnvLoader.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure URLs for all interfaces
+builder.WebHost.UseUrls("http://0.0.0.0:7000", "https://0.0.0.0:7001");
+
 // Core services
 builder.Services.AddControllers();
 builder.Services.AddHostedService<Worker>();
