@@ -1,31 +1,26 @@
-﻿services:
+﻿version: '3.8'
+
+services:
   mystoremanagement:
-    image: mystoremanagement
-    build:
-      context: .
-      dockerfile: MyStoreManagement.API/Dockerfile
+    build: .
+    container_name: mystoremanagement-app
     ports:
-      - "3000:3000"
-      - "3001:3001"
+      - "3000:3000"  # Map container port 3000 to host port 3000
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:3000;https://+:3001
-      - CERT_PASSWORD=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-      - CLIENT_SECRET=${CLIENT_SECRET}
-      - CONNECTION_DATABASE=${CONNECTION_DATABASE}
+      - ASPNETCORE_URLS=http://+:3000
+      - ASPNETCORE_HTTPS_PORTS=""
     volumes:
-      - ./certs:/https:ro
+      - ./logs:/app/logs 
     restart: unless-stopped
-    networks:
-      - mystore-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-
+    networks:
+      - app-network
 networks:
-  mystore-network:
+  app-network:
     driver: bridge
