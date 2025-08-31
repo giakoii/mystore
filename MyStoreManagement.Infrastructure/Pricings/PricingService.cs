@@ -73,7 +73,7 @@ public class PricingService : IPricingService
                 ProductTypeId = detail.ProductTypeId,
                 PricingBatchId = pricingBatch.PricingBatchId,
                 Price = detail.Price,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             }).ToList();
 
             await _productPriceRepository.AddRangeAsync(productPrices);
