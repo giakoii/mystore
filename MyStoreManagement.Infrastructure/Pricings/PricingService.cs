@@ -1,11 +1,10 @@
+using System.Linq.Expressions;
 using MyStoreManagement.Application.Dtos.Pricings;
 using MyStoreManagement.Application.Interfaces.Pricings;
 using MyStoreManagement.Application.Interfaces.Repositories;
 using MyStoreManagement.Application.Utils.Paginations;
 using MyStoreManagement.Domain.Models;
 using Shared.Application.Utils.Const;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace MyStoreManagement.Infrastructure.Pricings;
 
@@ -154,12 +153,12 @@ public class PricingService : IPricingService
                     {
                         PriceId = pp.PriceId,
                         ProductTypeId = pp.ProductTypeId,
-                        TypeName = productType?.TypeName ?? "Unknown",
+                        TypeName = productType?.TypeName!,
                         Price = pp.Price
                     };
                 }).ToList()
             })
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderBy(x => x.CreatedAt)
             .ToList();
 
             var paginationResponse = new PaginationResponse<PricingBatchSelectsEntity>(
