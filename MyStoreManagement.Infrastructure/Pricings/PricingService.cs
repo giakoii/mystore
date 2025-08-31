@@ -61,7 +61,7 @@ public class PricingService : IPricingService
             {
                 Title = request.Title,
                 Description = request.Description,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             };
 
             await _pricingBatchRepository.AddAsync(pricingBatch);
@@ -97,20 +97,24 @@ public class PricingService : IPricingService
 
         try
         {
-            // Tạo predicate cho filtering
             Expression<Func<PricingBatch, bool>>? predicate = null;
             
             if (request.FromDate.HasValue && request.ToDate.HasValue)
             {
-                predicate = pb => pb.CreatedAt >= request.FromDate.Value && pb.CreatedAt <= request.ToDate.Value;
+                var fromDateTime = request.FromDate.Value.ToDateTime(TimeOnly.MinValue);
+                var toDateTime = request.ToDate.Value.ToDateTime(TimeOnly.MaxValue);
+
+                predicate = pb => pb.CreatedAt >= fromDateTime && pb.CreatedAt <= toDateTime;
             }
             else if (request.FromDate.HasValue)
             {
-                predicate = pb => pb.CreatedAt >= request.FromDate.Value;
+                var fromDateTime = request.FromDate.Value.ToDateTime(TimeOnly.MinValue);
+                predicate = pb => pb.CreatedAt >= fromDateTime;
             }
             else if (request.ToDate.HasValue)
             {
-                predicate = pb => pb.CreatedAt <= request.ToDate.Value;
+                var toDateTime = request.ToDate.Value.ToDateTime(TimeOnly.MaxValue);
+                predicate = pb => pb.CreatedAt <= toDateTime;
             }
 
             // Sử dụng PagedAsync để lấy data với pagination

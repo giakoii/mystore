@@ -4,6 +4,6 @@ namespace MyStoreManagement.Application.Dtos.Pricings;
 
 public class PricingBatchSelectsRequest : PaginationRequest
 {
-    public DateTime? FromDate { get; set; }
-    public DateTime? ToDate { get; set; }
+    public DateOnly? FromDate { get; set; }
+    public DateOnly? ToDate { get; set; }
 }
