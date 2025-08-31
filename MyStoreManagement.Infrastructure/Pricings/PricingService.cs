@@ -126,6 +126,7 @@ public class PricingService : IPricingService
                 predicate,
                 false,
                 CancellationToken.None,
+                q => q.OrderByDescending(pb => pb.CreatedAt),
                 pb => pb.ProductPrices
             );
 

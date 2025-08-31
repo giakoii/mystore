@@ -19,7 +19,7 @@ public interface IRepository<TEntity> where TEntity : class
     /// <summary>
     /// Get paged entities.
     /// </summary>
-    Task<PagedResult<TEntity>> PagedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes);
+    Task<PagedResult<TEntity>> PagedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default,     Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, params Expression<Func<TEntity, object>>[] includes);
     
     /// <summary>
     /// Check if entity exists.

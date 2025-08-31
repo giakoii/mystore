@@ -57,7 +57,15 @@ public class BaseRepository<TEntity>(MyStoreManagementContext context) : IReposi
     /// <param name="predicate"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<PagedResult<TEntity>> PagedAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? predicate = null, bool isTracking = false, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[] includes)
+    public async Task<PagedResult<TEntity>> PagedAsync(
+        int pageNumber,
+        int pageSize,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        bool isTracking = false,
+        CancellationToken cancellationToken = default,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        params Expression<Func<TEntity, object>>[] includes
+    )
     {
         var query = DbSet.AsQueryable();
 
@@ -68,6 +76,9 @@ public class BaseRepository<TEntity>(MyStoreManagementContext context) : IReposi
 
         if (!isTracking)
             query = query.AsNoTracking();
+
+        if (orderBy != null)
+            query = orderBy(query);
 
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query

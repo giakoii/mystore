@@ -140,6 +140,7 @@ public class OrderService : IOrderService
                 o => o.UserId == userIdInt,
                 false,
                 CancellationToken.None,
+                orderBy: null,
                 o => o.User,
                 o => o.OrderDetails
             );
