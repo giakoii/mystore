@@ -57,11 +57,14 @@ public class PricingService : IPricingService
         // Create new pricing batch
         await _unitOfWork.BeginTransactionAsync(async () =>
         {
+            var timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            var vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+
             var pricingBatch = new PricingBatch
             {
                 Title = request.Title,
                 Description = request.Description,
-                CreatedAt = DateTime.Now
+                CreatedAt = vietnamTime
             };
 
             await _pricingBatchRepository.AddAsync(pricingBatch);
@@ -73,7 +76,7 @@ public class PricingService : IPricingService
                 ProductTypeId = detail.ProductTypeId,
                 PricingBatchId = pricingBatch.PricingBatchId,
                 Price = detail.Price,
-                CreatedAt = DateTime.Now
+                CreatedAt = vietnamTime
             }).ToList();
 
             await _productPriceRepository.AddRangeAsync(productPrices);
