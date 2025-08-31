@@ -158,7 +158,7 @@ public class PricingService : IPricingService
                     };
                 }).ToList()
             })
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .ToList();
 
             var paginationResponse = new PaginationResponse<PricingBatchSelectsEntity>(
