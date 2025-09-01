@@ -1,6 +1,7 @@
 using MyStoreManagement.Application.Dtos.Orders;
 using MyStoreManagement.Application.Interfaces.Orders;
 using MyStoreManagement.Application.Interfaces.Repositories;
+using MyStoreManagement.Application.Utils;
 using MyStoreManagement.Application.Utils.Paginations;
 using MyStoreManagement.Domain.Models;
 using Shared.Application.Utils.Const;
@@ -36,37 +37,37 @@ public class OrderService : IOrderService
     {
         var response = new OrderCreateResponse { Success = false };
 
-        try
+        var userExist = await _userRepository.FirstOrDefaultAsync(x => x.Phone == request.PhoneNumber);
+        if (userExist == null)
         {
-            var userExist = await _userRepository.FirstOrDefaultAsync(x => x.Phone == request.PhoneNumber);
-            if (userExist == null)
-            {
-                response.SetMessage(MessageId.E00000, "User with this phone number does not exist.");
-                return response;
-            }
+            response.SetMessage(MessageId.E00000, "User with this phone number does not exist.");
+            return response;
+        }
 
-            var currentDate = DateTime.UtcNow;
-            
-            // Lấy pricing batch mới nhất
-            var latestPricingBatch = (await _pricingBatchRepository
+        var currentDate = DateTime.UtcNow;
+
+        // Lấy pricing batch mới nhất
+        var latestPricingBatch = (await _pricingBatchRepository
                 .ToListAsync(pb => pb.CreatedAt <= currentDate))
-                .OrderByDescending(pb => pb.CreatedAt)
-                .FirstOrDefault();
+            .OrderByDescending(pb => pb.CreatedAt)
+            .FirstOrDefault();
 
-            if (latestPricingBatch == null)
-            {
-                response.SetMessage(MessageId.E00000, "No pricing batch available.");
-                return response;
-            }
+        if (latestPricingBatch == null)
+        {
+            response.SetMessage(MessageId.E00000, "No pricing batch available.");
+            return response;
+        }
 
+        await _unitOfWork.BeginTransactionAsync(async () =>
+        {
             // Tạo order mới
             var newOrder = new Order
             {
                 UserId = userExist.UserId,
-                OrderDate = currentDate,
+                OrderDate = StringUtil.GetVietnamTime(),
                 TotalAmount = 0
             };
-            
+
             await _orderRepository.AddAsync(newOrder);
             await _unitOfWork.SaveChangesAsync();
 
@@ -77,13 +78,14 @@ public class OrderService : IOrderService
             foreach (var orderDetailRequest in request.OrderDetails)
             {
                 var productPrice = await _productPriceRepository
-                    .FirstOrDefaultAsync(pp => pp.ProductTypeId == orderDetailRequest.OrderTypeId 
-                                             && pp.PricingBatchId == latestPricingBatch.PricingBatchId);
+                    .FirstOrDefaultAsync(pp => pp.ProductTypeId == orderDetailRequest.OrderTypeId
+                                               && pp.PricingBatchId == latestPricingBatch.PricingBatchId);
 
                 if (productPrice == null)
                 {
-                    response.SetMessage(MessageId.E00000, $"Price not found for product type {orderDetailRequest.OrderTypeId}.");
-                    return response;
+                    response.SetMessage(MessageId.E00000,
+                        $"Price not found for product type {orderDetailRequest.OrderTypeId}.");
+                    return false;
                 }
 
                 var orderDetail = new OrderDetail
@@ -100,21 +102,17 @@ public class OrderService : IOrderService
 
             // Thêm order details
             await _orderDetailRepository.AddRangeAsync(orderDetails);
-            
+
             // Cập nhật total amount
             newOrder.TotalAmount = totalAmount;
-            
+
             await _unitOfWork.SaveChangesAsync();
 
+            // True
             response.Success = true;
-            response.Response = "Order created successfully";
-            response.SetMessage(MessageId.I00001, "Order created successfully.");
-        }
-        catch (Exception ex)
-        {
-            response.SetMessage(MessageId.E00000, $"Error creating order: {ex.Message}");
-        }
-
+            response.SetMessage(MessageId.I00001);
+            return true;
+        });
         return response;
     }
 

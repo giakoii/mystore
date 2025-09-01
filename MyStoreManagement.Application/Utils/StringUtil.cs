@@ -233,6 +233,16 @@ public static class StringUtil
     {
         return date.HasValue ? date.Value.ToString("HH:mm") : string.Empty;
     }
+    
+    /// <summary>
+    /// Convert to DD/MM/YYYY HH:mm from VietNam timezone
+    /// </summary>
+    /// <returns></returns>
+    public static DateTime GetVietnamTime()
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+    }
 
     #endregion
 }

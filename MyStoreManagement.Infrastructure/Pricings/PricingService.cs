@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using MyStoreManagement.Application.Dtos.Pricings;
 using MyStoreManagement.Application.Interfaces.Pricings;
 using MyStoreManagement.Application.Interfaces.Repositories;
+using MyStoreManagement.Application.Utils;
 using MyStoreManagement.Application.Utils.Paginations;
 using MyStoreManagement.Domain.Models;
 using Shared.Application.Utils.Const;
@@ -56,14 +57,11 @@ public class PricingService : IPricingService
         // Create new pricing batch
         await _unitOfWork.BeginTransactionAsync(async () =>
         {
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-            var vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
-
             var pricingBatch = new PricingBatch
             {
                 Title = request.Title,
                 Description = request.Description,
-                CreatedAt = vietnamTime
+                CreatedAt = StringUtil.GetVietnamTime()
             };
 
             await _pricingBatchRepository.AddAsync(pricingBatch);
@@ -75,7 +73,7 @@ public class PricingService : IPricingService
                 ProductTypeId = detail.ProductTypeId,
                 PricingBatchId = pricingBatch.PricingBatchId,
                 Price = detail.Price,
-                CreatedAt = vietnamTime
+                CreatedAt = StringUtil.GetVietnamTime()
             }).ToList();
 
             await _productPriceRepository.AddRangeAsync(productPrices);
