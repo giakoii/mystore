@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using MyStoreManagement.Application.Interfaces.Orders;
 using MyStoreManagement.Application.Interfaces.IdentityHepers;
 using MyStoreManagement.Application.Dtos.Orders;
+using MyStoreManagement.Application.Utils.Const;
+using OpenIddict.Validation.AspNetCore;
 
 namespace MyStoreManagement.API.Controllers;
 
@@ -21,6 +23,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = ConstRole.Admin, AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateOrder([FromBody] OrderCreateRequest request)
     {
         if (!ModelState.IsValid)
@@ -39,6 +42,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetMyOrders([FromQuery] OrderSelectRequest request)
     {
         if (!ModelState.IsValid)

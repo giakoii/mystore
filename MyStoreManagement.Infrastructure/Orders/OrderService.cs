@@ -140,7 +140,7 @@ public class OrderService : IOrderService
                 o => o.UserId == userIdInt,
                 false,
                 CancellationToken.None,
-                orderBy: null,
+                orderBy: x => x.OrderByDescending(o => o.OrderDate),
                 o => o.User,
                 o => o.OrderDetails
             );
@@ -164,15 +164,15 @@ public class OrderService : IOrderService
                 OrderId = order.OrderId,
                 OrderDate = order.OrderDate,
                 TotalAmount = order.TotalAmount,
-                UserName = order.User?.FullName ?? "Unknown",
-                PhoneNumber = order.User?.Phone ?? "Unknown",
+                UserName = order.User?.FullName!,
+                PhoneNumber = order.User?.Phone!,
                 OrderDetails = order.OrderDetails.Select(od => {
                     var productPrice = productTypes.FirstOrDefault(pp => pp.ProductTypeId == od.ProductTypeId);
                     return new OrderDetailResponse
                     {
                         OrderDetailId = od.OrderDetailId,
                         ProductTypeId = od.ProductTypeId,
-                        ProductTypeName = productPrice?.ProductType?.TypeName ?? "Unknown",
+                        ProductTypeName = productPrice?.ProductType?.TypeName!,
                         Quantity = od.Quantity,
                         Price = od.Price
                     };
@@ -184,7 +184,7 @@ public class OrderService : IOrderService
 
             response.Success = true;
             response.Response = paginationResponse;
-            response.SetMessage(MessageId.I00001, "Orders retrieved successfully.");
+            response.SetMessage(MessageId.I00001);
         }
         catch (Exception ex)
         {
