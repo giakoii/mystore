@@ -41,7 +41,7 @@ public class OrderController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet]
+    [HttpGet("my-orders")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetMyOrders([FromQuery] OrderSelectRequest request)
     {
@@ -57,6 +57,72 @@ public class OrderController : ControllerBase
         }
 
         var result = await _orderService.GetOrdersByUserIdAsync(currentUser.UserId, request);
+        
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("{orderId:int}")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetOrderDetail(int orderId)
+    {
+        var result = await _orderService.GetOrderDetailAsync(orderId);
+        
+        if (!result.Success)
+        {
+            return BadRequest(new { message = result.Message });
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("admin/detail/{orderId:int}")]
+    [Authorize(Roles = ConstRole.Admin, AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetAdminOrderDetail(int orderId)
+    {
+        var result = await _orderService.GetAdminOrderDetailAsync(orderId);
+        
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("admin/all")]
+    [Authorize(Roles = ConstRole.Admin, AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetAllOrders([FromQuery] AdminOrderSelectRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _orderService.GetAllOrdersAsync(request);
+        
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("admin/user/{userId:int}")]
+    [Authorize(Roles = ConstRole.Admin, AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetUserOrders(int userId, [FromQuery] OrderSelectRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _orderService.GetOrdersByUserIdAsync(userId.ToString(), request);
         
         if (!result.Success)
         {
